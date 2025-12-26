@@ -1,6 +1,6 @@
 # MiniShell Project
 
-Hi! This is my MiniShell project for the Operating Systems course.  
+This is my MiniShell project for the Operating Systems course.  
 I built a simple Unix-like shell using Lex and Yacc. Here's what it can do and how I worked on it.
 
 ## What My Shell Can Do
