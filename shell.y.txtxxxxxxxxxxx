@@ -1,0 +1,85 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+
+void execute_command(char **args);
+void yyerror(const char *s);
+int yylex();
+%}
+
+%union {
+    char *string;
+}
+
+%token <string> WORD
+%token PIPE REDIRECT_OUT REDIRECT_IN NEWLINE
+
+%%
+
+input:
+    command NEWLINE
+    | input command NEWLINE
+    ;
+
+command:
+    simple_command
+    ;
+
+simple_command:
+    WORD args {
+        char *cmd[100];
+        cmd[0] = $1;
+        int i = 1;
+        for (; $2[i-1] != NULL; i++)
+            cmd[i] = $2[i-1];
+        cmd[i] = NULL;
+        execute_command(cmd);
+    }
+    ;
+
+args:
+    /* empty */ { $$ = malloc(sizeof(char*)); $$[0] = NULL; }
+    | args WORD {
+        int i = 0;
+        while ($1[i] != NULL) i++;
+        $1 = realloc($1, (i+2) * sizeof(char*));
+        $1[i] = $2;
+        $1[i+1] = NULL;
+        $$ = $1;
+    }
+    ;
+
+%%
+
+void execute_command(char **args) {
+    if (strcmp(args[0], "exit") == 0) {
+        exit(0);
+    }
+
+    if (strcmp(args[0], "cd") == 0) {
+        chdir(args[1]);
+        return;
+    }
+
+    pid_t pid = fork();
+    if (pid == 0) {
+        execvp(args[0], args);
+        perror("exec failed");
+        exit(1);
+    } else {
+        wait(NULL);
+    }
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+int main() {
+    printf("MiniShell started...\n");
+    yyparse();
+    return 0;
+}
