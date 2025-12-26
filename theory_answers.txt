@@ -1,0 +1,28 @@
+MiniShell – Theory Answers
+==========================
+
+1. What is a Shell?
+A shell is a command-line interface that allows users to interact with the operating system.
+
+2. Role of fork(), exec(), wait():
+fork() creates child processes.
+exec() runs a program in the child process.
+wait() makes the parent wait for the child to finish.
+
+3. Lex & Yacc:
+Lex = lexical analyzer
+Yacc = parser generator
+
+4. Command execution:
+Shell parses input → fork() → execvp() → parent waits
+
+5. Built-in commands: cd, exit
+
+6. Pipes:
+Output of one command → input of another
+
+7. I/O Redirection:
+Use file descriptors to read/write files instead of terminal
+
+8. Challenges:
+Parsing, process management, file descriptors, resource leaks
